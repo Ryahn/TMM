@@ -1,0 +1,55 @@
+/* Passport strategies */
+const
+    bcrypt = require('bcrypt')
+    ;
+
+module.exports function(passport, user) {
+    let User = user,
+        LocalStrategy = require('passport-local').Strategy;
+
+    passport.use('local-signup', new LocalStrategy(
+        {
+            usernameField: 'username',
+            passwordField: 'password',
+            passReqToCallback: true
+        },
+
+        function (req, username, password, done) {
+            let generateHash = function (password) {
+                let salt = bcrypt.genSaltSync(10);
+                let hash = bcrypt.hashSync(password, salt);
+                return hash;
+            };
+
+            User.findOne({
+                where: {
+                    username: username
+                }
+            }).then(user => {
+                if (user) {
+                    return done(null, false, {
+                        message: 'Username is already taken'
+                    });
+                } else {
+                    let userPass = generateHash(password);
+                    let data = {
+                        username: username,
+                        password: userPass,
+                        role: parseInt(req.body.create_role),
+                        steamid: req.body.create_steamid,
+                        chlink: req.body.create_chlink,
+                    };
+
+                    User.create(data).then(function(newUser, created) {
+                        if (!newUser) {
+                            return done(null, false);
+                        }
+
+                        if (newUser) {
+                            return done(null, newUser);
+                        }
+                    });
+                }
+            });
+        }
+    ));

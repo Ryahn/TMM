@@ -1,0 +1,238 @@
+<!-- jQuery 3 -->
+<script src="/js/jquery.min.js"></script>
+<!-- Bootstrap 3.3.7 -->
+<script src="/js/bootstrap.min.js"></script>
+<!-- AdminLTE App -->
+<script src="/js/adminlte.min.js"></script>
+<!-- jvectormap  -->
+<script src="/js/jquery-jvectormap-1.2.2.min.js"></script>
+<script src="/js/jquery-jvectormap-world-mill-en.js"></script>
+<!-- ChartJS -->
+<script src="/js/Chart.min.js"></script>
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+<script src="/js/jquery.dataTables.min.js"></script>
+<script src="/js/dataTables.bootstrap.min.js"></script>
+<script src="/js/moment.js"></script>
+<script src="/js/select2.min.js"></script>
+<!-- <script src="/js/jquery.easy-autocomplete.min.js"></script> -->
+<!-- <script src="/js/jquery.auto-complete.min.js"></script> -->
+<!-- <script src="/js/selectize.js"></script> -->
+
+<script>
+    $(document).ready(function () {
+        $('#users').DataTable();
+        $('#trainers').DataTable({
+            "order": [[1, 'asc']]
+        });
+
+        $('.tnotes').on('click', function (event) {
+            $('#TrainerNotesTitle').text($(this).attr('data-gametitle'));
+            $('#tnotes_body').text($('#t_notes').text());
+            $('#trainerNotesModal').modal('toggle');
+        });
+
+        var addTrainer = false;
+        $('.addtrainer').on('click', function (event) {
+            
+                $.ajax({
+                    type: 'GET',
+                    url: '/trainers/modal',
+                    success: function (data) {
+                        if ($('#trainerCsrfCode').length > 0) { $('#trainerCsrfCode').remove(); }
+                        $('#addTrainerForm').append(`<input type="hidden" id="trainerCsrfCode" name="_csrf" value="${data.csrf}">`);
+                        if (!addTrainer) {
+                            $.each(data.platforms, function (index, platform) {
+                                $('#tplatform').append($('<option></option>')
+                                    .attr('value', platform.pid)
+                                    .text(platform.pname));
+                            });
+
+                            $.each(data.trainers, function (index, trainer) {
+                                $('#tplatform').append($('<option></option>')
+                                    .attr('value', trainer.tid)
+                                    .text(trainer.tname));
+                            });
+                            addTrainer = true;
+                        }
+
+                        $('#addTrainerModal').modal('toggle');
+                    }
+                });
+
+            var timeout = null;
+            $('#title_search').on('keyup input', function () {
+                clearTimeout(timeout);
+
+                var input = $(this).val();
+                var resultDropdown = $(this).siblings('.results');
+
+                timeout = setTimeout(function () {
+                    if (input.length) {
+                        $.get('/games/all', { search: input })
+                            .done(function (data) {
+                                resultDropdown.html(data);
+                            });
+                    } else {
+                        resultDropdown.empty();
+                    }
+                }, 500);
+            });
+
+            $(document).on('click', '.results p', function () {
+                $(this).parents('.search-box').find('input[type="text"]').val($(this).text());
+                $(this).parent('.results').empty();
+            });
+        });
+
+        $('addTrainerForm').on('submit', function (event) {
+            var $form = $(this);
+            var url = $form.attr('action');
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: $form.serialize(),
+                success: function (data) {
+                    $('#edituserModal').modal('hide');
+                    location.reload();
+                },
+                error: function (err) {
+                    $('#edituserModal').modal('hide');
+                    location.reload();
+                }
+            });
+            event.preventDefault();
+        });
+
+        var addUser = false;
+        $('.addusermodal').on('click', function (event) {
+
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                url: '/users/roles',
+                success: function (data) {
+                    if ($('#userCsrfCode').length > 0) { $('#userCsrfCode').remove(); }
+                    $('#addUserForm').append(`<input id="userCsrfCode" type="hidden" name="_csrf" value="${data.csrf}">`);
+                    if (!addUser) {
+                        $.each(data.roles, function (index, role) {
+                            $('#create_role').append($('<option></option>')
+                                .attr('value', role.rid)
+                                .text(role.rname));
+                        });
+                        addUser = true;
+                    }
+
+                    $('#addUserModal').modal('toggle');
+                },
+                error: function (req, res, err) {
+                    console.log("ajax call went wrong:" + req.responseText);
+                }
+            });
+            
+        });
+
+        $('.editusermodal').on('click', function (event) {
+            $.ajax({
+                type: 'GET',
+                dataType: 'json',
+                url: $(this).attr('data-link'),
+                success: function (data) {
+                    var user = data.user[0];
+                    $('#user').text(user.username);
+                    $('#username').val(user.username);
+                    if (user.steamid) $('#steamid').val(user.steamid);
+                    if (user.chlink) $('#chlink').val(user.chlink);
+                    $('#created').text(moment(data.created_at).format('MMM Do YYYY HH:mm:ss'));
+                    $('#updated').text(moment(data.updated_at).format('MMM Do YYYY HH:mm:ss'));
+                    if ($('#csrfCode').length > 0) { $('#csrfCode').remove(); }
+                    if ($('#userID').length > 0) { $('#userID').remove(); }
+                    $('#editUserForm').append(`<input type="hidden" id="csrfCode" name="_csrf" value="${data.csrf}">`);
+                    $('#editUserForm').append(`<input type="hidden" id="userID" name="userid" value="${user.id}">`);
+
+                    $.each(data.roles, function (index, role) {
+                        if (user.role === role.rid) {
+                            $('#role').append($('<option selected></option>')
+                                .attr('value', role.rid)
+                                .text(role.rname));
+                        } else {
+                            $('#role').append($('<option></option>')
+                                .attr('value', role.rid)
+                                .text(role.rname));
+                        }
+                    });
+
+                    $('#edituserModal').modal('toggle');
+                },
+                error: function (req, res, err) {
+                    console.log("ajax call went wrong:" + req.responseText);
+                }
+            });
+        });
+
+        $('#editUserForm').on('submit', function (event) {
+
+
+            var $form = $(this);
+            var url = $form.attr('action');
+
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: $form.serialize(),
+                success: function (data) {
+                    $('#edituserModal').modal('hide');
+                    location.reload();
+                },
+                error: function (err) {
+                    $('#edituserModal').modal('hide');
+                    location.reload();
+                }
+            });
+            event.preventDefault();
+        });
+
+        $('.delete-user').on('click', function (event) {
+            $target = $(event.target);
+            var id = $target.attr('data-id');
+            var csrf = $target.attr('data-csrf');
+            if (confirm("Are you sure?")) {
+                $.ajax({
+                    url: '/users/delete',
+                    type: 'POST',
+                    data: {
+                        id: id,
+                        _csrf: csrf
+                    },
+                    success: function (data) {
+                        location.reload();
+                    },
+                    error: function (err) {
+                        console.log(`Error: ${err}`);
+                    }
+                });
+            }
+        });
+    });
+
+
+
+    $('.alert').delay(5000).slideUp(200, function () {
+        $(this).alert('close');
+    });
+
+    //Credit https://jsfiddle.net/Guffa/DDn6W/
+    function randomPassword(length) {
+        var chars = "abcdefghijklmnopqrstuvwxyz!@#$%^&*()-+<>ABCDEFGHIJKLMNOP1234567890";
+        var pass = "";
+        for (var x = 0; x < length; x++) {
+            var i = Math.floor(Math.random() * chars.length);
+            pass += chars.charAt(i);
+        }
+        return pass;
+    }
+
+    $('#genPass').on('click', function (event) {
+        $('#create_password').val(randomPassword(15));
+    });
+</script>

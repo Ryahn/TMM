@@ -1,0 +1,13 @@
+/* Database settings */
+
+module.exports = {
+    database: '',
+    username: '',
+    password: '',
+    dialect: 'mysql',
+    host: '127.0.0.1',
+    logging: false,
+    define: {
+        underscored: true
+    }
+};

@@ -1,0 +1,52 @@
+<div class="modal fade" id="addTrainerModal" tabindex="-1" role="dialog" aria-labelledby="addTrainerModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="addTrainerModalLabel">
+                    Create Trainer
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form id="addTrainerForm" name="addTrainer" role="form" action="/trainers/create" method="post">
+                    <div class="form-group">
+                        <select name="ttype" id="ttype" class="form-control">
+                            <option value="new" selected>New Report</option>
+                            <option value="existing">Reported Before</option>
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group search-box">
+                                <label for="title_search">Game Title</label>
+                                <input type="text" name="title_search" id="title_search" class="form-control" placeholder="Search for game by title or appid">
+                                <div class="results"></div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label for="tplatform">Platform</label>
+                                <select name="tplatform" id="tplatform" class="form-control"></select>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label for="tstatus">Status</label>
+                        <select name="tstatus" id="tstatus" class="form-control">
+                            <option value="1">Active</option>
+                            <option value="0">Retired</option>
+                            <option value="2">On Hold</option>
+                            <option value="3">Under Review</option>
+                        </select>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>

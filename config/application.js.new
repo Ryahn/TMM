@@ -1,0 +1,37 @@
+/* General application settings */
+module.exports = {
+    /* Set to either
+    * dev  | Development/local enviroment - Not to be used for production
+    * prod | For production
+    * */
+    mode: 'dev',
+
+    //Should be changed once on a production server
+    ip: '0.0.0.0',
+
+    //Set to whatever you prefer. Be sure to setup Apache or Nginx with a proxy
+    port: 9092,
+
+    //Domain ex: trainer.example.com
+    hostname: '',
+
+    //Randomized string for salting sessions and cookies
+    session_secret: '',
+
+    logger: {
+        //Enable console logging. Set to false or tiny/common
+        enabled: true,
+
+        /* Use one of the following
+        * dev      - Concise output colored by response status for development use
+        * combined - Standard Apache combined log output
+        * common   - Standard Apache common log output
+        * short    - Shorter than default, also including response time
+        * tiny     - The minimal output
+        */
+        level: 'dev',
+
+        //Show everything (false) or only errors (true)
+        showOnErrors: true
+    }
+};

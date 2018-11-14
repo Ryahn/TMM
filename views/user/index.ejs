@@ -1,0 +1,99 @@
+<% extend('../layout') %>
+<!-- Content Header (Page header) -->
+<section class="content-header">
+    <ol class="breadcrumb">
+        <li><a href="/"><i class="fal fa-home"></i></i> Home</a></li>
+        <li><i class="fal fa-user"></i> Users</li>
+    </ol>
+</section>
+
+<!-- Main content -->
+<section class="content">
+    <%- messages('partials/messages', locals) %>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="box-header">
+                    <h3 class="box-title">Users List</h3> <button type="button" id="addUserButton" class="btn btn-info pull-right addusermodal"
+                        data-target="#addUserModal">Add User</button>
+                </div>
+                <!-- /.box-header -->
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <table id="users" class="table table-bordered table-striped dataTable" role="grid">
+                                <thead>
+                                    <tr role="row">
+                                        <th>User ID</th>
+                                        <th>Username</th>
+                                        <th>Role</th>
+                                        <th>Last Login (UTC)</th>
+                                        <th>Created At (UTC)</th>
+                                        <th>Updated At (UTC)</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% users.forEach(function(user){ %>
+                                    <tr role="row">
+                                        <td>
+                                            <%= user.id %>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <%= user.username %>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <span class="label label-<%= user.rslug %>">
+                                                <%= user.rname %></span>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <% userLogin = moment(user.lastLogin); %>
+                                            <% if(userLogin.isValid()) { %>
+                                            <%= moment(user.lastLogin).format('MMM Do YYYY HH:mm:ss') %>
+                                            <% } else { %>
+                                            N/A
+                                            <% } %>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <%= moment(user.created_at).format('MMM Do YYYY HH:mm:ss') %>
+                                        </td>
+                                        <td style="text-align: center;">
+                                            <% userDate = moment(user.updated_at); %>
+                                            <% if(userDate.isValid()) { %>
+                                            <%= moment(user.updated_at).format('MMM Do YYYY HH:mm:ss') %>
+                                            <% } else { %>
+                                            N/A
+                                            <% } %>
+                                        </td>
+                                        <td style="text-align: center; width: 200px;"><button data-link="/users/edit/<%= user.id %>"
+                                                type="button" id="editUserButton" class="btn btn-primary editusermodal"
+                                                data-target="#edituserModal">Edit</button> <a href="#" class="btn btn-warning">Promote</a>
+                                            <button type="button" id="deleteUserButton" class="btn btn-danger delete-user"
+                                                data-id="<%= user.id %>" data-csrf="<%= csrf %>">Delete</button></td>
+                                    </tr>
+                                    <% }); %>
+
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th>User ID</th>
+                                        <th>Username</th>
+                                        <th>Role</th>
+                                        <th>Last Login (UTC)</th>
+                                        <th>Created At (UTC)</th>
+                                        <th>Updated At (UTC)</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <% include ../partials/modals/editUserModal %>
+                <% include ../partials/modals/addUserModal %>
+                <!-- /.box-body -->
+            </div>
+        </div>
+    </div>
+</section>

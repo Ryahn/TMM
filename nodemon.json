@@ -1,0 +1,11 @@
+{
+    "ignore": [
+        "*.svg",
+        "node_modules/*/**",
+        "static/fonts/*",
+        "static/webfonts/*",
+        "static/svgs/*",
+        "old/*/**"
+    ],
+    "ext": "js"
+}

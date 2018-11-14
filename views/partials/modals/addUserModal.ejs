@@ -1,0 +1,45 @@
+<div class="modal fade" id="addUserModal" tabindex="-1" role="dialog" aria-labelledby="addUserModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="addUserModalLabel">
+                    Create User
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form id="addUserForm" name="addUser" role="form" action="/users/create" method="post">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" name="create_username" id="create_username" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-group">
+                            <input type="text" name="create_password" id="create_password" class="form-control" style="width:99.5%;">
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" type="button" id="genPass">Generate</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="steamid">Steam ID 64</label>
+                        <input type="text" name="create_steamid" id="create_steamid" class="form-control" placeholder="Steam ID 64: 76561198020520246">
+                    </div>
+                    <div class="form-group">
+                        <label for="steamid">CH Profile Link</label>
+                        <input type="url" name="create_chlink" id="create_chlink" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="roles">Change Role (Current Role Selected)</label>
+                        <select name="create_role" class="form-control" id="create_role"></select>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Save changes</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
